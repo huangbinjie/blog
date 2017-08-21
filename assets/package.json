@@ -1,0 +1,44 @@
+{
+  "repository": {},
+  "license": "MIT",
+  "scripts": {
+    "deploy": "brunch build --production",
+    "watch": "brunch watch --stdin"
+  },
+  "dependencies": {
+    "@types/phoenix": "0.0.4",
+    "csstips": "^0.2.0",
+    "firebase": "^3.7.4",
+    "history": "^4.6.1",
+    "meng": "^3.3.8",
+    "office-ui-fabric-react": "^2.5.1",
+    "phoenix": "file:../deps/phoenix",
+    "phoenix_html": "file:../deps/phoenix_html",
+    "react": "^15.4.2",
+    "react-dom": "^15.4.2",
+    "react-iscroller": "^1.0.8",
+    "react-router": "^4.0.0",
+    "react-router-dom": "^4.0.0",
+    "rxjs": "^5.2.0",
+    "typescript": "^2.2.2",
+    "typestyle": "^1.2.1"
+  },
+  "devDependencies": {
+    "@types/history": "^4.5.0",
+    "@types/react": "^15.0.20",
+    "@types/react-dom": "^0.14.23",
+    "@types/react-hot-loader": "^3.0.1",
+    "cors": "^2.8.1",
+    "css-loader": "^0.27.3",
+    "express": "^4.15.2",
+    "file-loader": "^0.10.1",
+    "react-hot-loader": "^3.0.0-beta.6",
+    "style-loader": "^0.13.2",
+    "ts-loader": "^2.0.1",
+    "uglifyjs-webpack-plugin": "^0.3.1",
+    "url-loader": "^0.5.8",
+    "webpack": "^2.2.1",
+    "webpack-dev-middleware": "^1.10.1",
+    "webpack-hot-middleware": "^2.17.1"
+  }
+}
