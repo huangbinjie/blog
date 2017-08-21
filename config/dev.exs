@@ -10,8 +10,8 @@ config :blog, BlogWeb.Endpoint,
   http: [port: 4000],
   debug_errors: true,
   code_reloader: true,
-  check_origin: false
-  # watchers: [node: ["assets/devServer.js"]]
+  check_origin: false,
+  watchers: [node: ["assets/devServer.js"]]
 
 # ## SSL Support
 #
