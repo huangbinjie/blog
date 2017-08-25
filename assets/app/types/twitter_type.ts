@@ -12,6 +12,9 @@ export type Twitter = {
 		urls: TwitterUrl[]
 		media: TwitterMedia[]
 	}
+	extended_entities: {
+		media: TwitterMedia[]
+	}
 	source: string
 	in_reply_to_status_id: null
 	in_reply_to_status_id_str: null
@@ -117,4 +120,10 @@ export type TwitterMedia = {
 	source_user_id_str: string
 	type: string
 	url: string
+	video_info: {
+		variants: Array<{
+			content_type: string
+			url: string
+		}>
+	}
 }

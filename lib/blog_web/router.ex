@@ -31,9 +31,9 @@ defmodule BlogWeb.Router do
       resources "/r/:channel", RedditController, only: [:index]
     end
 
-    get "/twitter", TwitterController, :index
+    get "/twitter/:name", TwitterController, :index
 
-    get "/", PageController, :index
+    get "/*path", PageController, :index
   end
 
   # Other scopes may use custom stacks.

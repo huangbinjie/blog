@@ -3,6 +3,9 @@
 		"tslint:latest"
 	],
 	"rules": {
+		"max-line-length": [
+			150
+		],
 		"arrow-parens": false,
 		"ordered-imports": [
 			false

@@ -1,8 +1,7 @@
 export const groups =
 	[
 		{
-			links:
-			[
+			links: [
 				{
 					name: "Coral",
 					url: "/",
@@ -10,7 +9,7 @@ export const groups =
 						{
 							name: "github",
 							url: "https://github.com/huangbinjie",
-							key: "github"
+							key: "github",
 						},
 						{
 							name: "翻译",
@@ -23,15 +22,62 @@ export const groups =
 							key: "issue_blog"
 						}
 					],
-					key: "",
-					isExpanded: false
+				},
+				{
+					name: "Twitter",
+					url: "/",
+					links: [
+						{
+							name: "dan_abramov",
+							url: "/twitter/dan_abramov",
+							key: "twitter/dan_abramov"
+						},
+						{
+							name: "BenLesh",
+							url: "/twitter/BenLesh",
+							key: "twitter/BenLesh"
+						},
+						{
+							name: "typescriptlang",
+							url: "/twitter/typescriptlang",
+							key: "twitter/typescriptlang"
+						},
+						{
+							name: "ReactJSNews",
+							url: "/twitter/ReactJSNews",
+							key: "twitter/ReactJSNews"
+						},
+						{
+							name: "ReactEurope",
+							url: "/twitter/ReactEurope",
+							key: "twitter/ReactEurope"
+						},
+						{
+							name: "czaplic",
+							url: "/twitter/czaplic",
+							key: "twitter/czaplic"
+						},
+						{
+							name: "elixirlang",
+							url: "/twitter/elixirlang",
+							key: "twitter/elixirlang"
+						},
+						{
+							name: "timadeath",
+							url: "/twitter/timadeath",
+							key: "twitter/timadeath"
+						},
+						{
+							name: "meto31",
+							url: "/twitter/meto31",
+							key: "twitter/meto31"
+						}
+					]
 				},
 				{ name: "Slack", url: "/slack", key: "slack" },
 				{ name: "Reddit", url: "/reddit", key: "reddit", isExpanded: true },
 				{ name: "HackNews", url: "/hn", key: "hn" },
-				{ name: "Medium", url: "", key: "medium" },
-				{ name: "chat", url: "/chat", key: "chat" },
-				{ name: "feedback", url: "/feedback", key: "feedback" }
+				{ name: "chat", url: "/chat", key: "chat" }
 			]
 		}
 	]

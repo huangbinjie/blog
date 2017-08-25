@@ -4,8 +4,8 @@ defmodule BlogWeb.TwitterController do
 	"""
 		doc: https://dev.twitter.com/rest/reference/get/statuses/user_timeline
 	"""
-	def index(conn, _) do
-		content = ExTwitter.user_timeline([screen_name: "pinyin__", count: 5]) 
+	def index(conn, %{"name" => name} = params) do
+		content = ExTwitter.user_timeline([screen_name: name, count: 100, exclude_replies: true]) 
 		json conn, content
 	end
 
@@ -13,7 +13,7 @@ defmodule BlogWeb.TwitterController do
 		doc: https://dev.twitter.com/rest/public/search
 	"""
 	def search(conn, _) do
-		content = ExTwitter.search("from:pinyin__", [count: 5]) 
+		content = ExTwitter.search("from:dan_abramov", [count: 5]) 
 					 |> Enum.map(fn(tweet) -> tweet.text end) 
 					 |> Enum.join("\n-----\n")
 		text conn, content

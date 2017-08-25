@@ -1,7 +1,7 @@
 declare module "react-router" {
 	export interface IMatch {
 		isExact: boolean
-		params: object
+		params: { [key: string]: string }
 		path: string
 		url: string
 	}
