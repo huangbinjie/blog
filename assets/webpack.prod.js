@@ -9,7 +9,7 @@ module.exports = {
     vendor: ['react', 'react-dom', 'office-ui-fabric-react']
   },
   output: {
-    path: path.join(__dirname, './priv/static'),
+    path: path.join(__dirname, '../priv/static'),
     publicPath: '/',
     filename: 'app.js'
   },
