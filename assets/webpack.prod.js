@@ -4,7 +4,7 @@ const path = require('path')
 module.exports = {
   entry: {
     app: [
-      './web/static/app/app.tsx'
+      path.join(__dirname, 'app/app.tsx'),
     ],
     vendor: ['react', 'react-dom', 'office-ui-fabric-react']
   },
@@ -24,8 +24,13 @@ module.exports = {
   resolve: {
     extensions: ['.webpack.js', '.tsx', '.ts', '.js'],
     modules: [
-      path.join(__dirname, 'web/static/app'),
-      'node_modules'
+      path.join(__dirname, "app/"),
+      path.join(__dirname, "node_modules/")
+    ]
+  },
+  resolveLoader: {
+    modules: [
+      path.join(__dirname, "node_modules/")
     ]
   },
   plugins: [
