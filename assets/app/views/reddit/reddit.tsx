@@ -17,7 +17,7 @@ type Props = {
 @lift({ posts: {} }, "Reddit")
 export default class Reddit extends React.Component<Props, {}> {
 	public render() {
-		const list = this.props.posts ? this.props.posts.data.children : null
+		const list = this.props.posts.data ? this.props.posts.data.children : null
 		return (
 			<FocusZone direction={FocusZoneDirection.vertical}>
 				<TextField defaultValue="/r/javascript" label="频道" />
