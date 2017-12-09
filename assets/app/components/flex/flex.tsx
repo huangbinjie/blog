@@ -10,6 +10,7 @@ type Props = {
 	flexGrow?: number
 	flexWrap?: "wrap" | "nowrap"
 	children?: React.ReactNode[]
+	style?: React.CSSProperties
 }
 
 export default function Flex(props: Props) {
@@ -21,5 +22,5 @@ export default function Flex(props: Props) {
 		flexGrow: props.flexGrow,
 		flexWrap: props.flexWrap
 	}
-	return <div className={style(flex)}>{props.children}</div>
+	return <div className={style(flex)} style={props.style || {}}>{props.children}</div>
 }

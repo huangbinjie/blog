@@ -10,7 +10,7 @@ export interface ISlackUserMessage {
 	text: string
 	ts: string
 	type: "message"
-	user: string | Optional<ISlackMember>
+	user: string | ISlackMember
 }
 
 export interface ISlackBotMessage {

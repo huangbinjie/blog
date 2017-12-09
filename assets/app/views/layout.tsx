@@ -12,19 +12,19 @@ import "office-ui-fabric-react/dist/css/fabric.min.css"
 import * as Style from "./layout_style"
 
 export default class RootLayout extends React.Component<{}, {}> {
-	public render() {
-		return (
-			<div className={Style.CONTAINER}>
-				<Nav />
-				<Switch>
-					<Route path="/" exact component={Main} />
-					<Route path="/reddit" component={Reddit} />
-					<Route path="/slack" component={Slack} />
-					<Route path="/hn" component={HN} />
-					<Route path="/chat" component={Chat} />
-					<Route path="/twitter/:name" component={TwitterView} />
-				</Switch>
-			</div>
-		)
-	}
+  public render() {
+    return (
+      <div className={Style.CONTAINER}>
+        <Nav />
+        <Switch>
+          <Route path="/" exact component={Main} />
+          <Route path="/reddit" component={Reddit} />
+          <Route path="/slack" component={Slack} />
+          <Route path="/hn" component={HN} />
+          <Route path="/chat" component={Chat} />
+          <Route path="/twitter/:name" component={TwitterView} />
+        </Switch>
+      </div>
+    )
+  }
 }

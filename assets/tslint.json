@@ -22,11 +22,12 @@
 		],
 		"indent": [
 			true,
-			"tabs"
+			"spaces"
 		],
 		"one-line": [
 			"check-else"
 		],
+		"max-classes-per-file": false,
 		"curly": false,
 		"trailing-comma": [
 			false
