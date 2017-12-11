@@ -2,7 +2,7 @@ import * as React from "react"
 import Store from "meng"
 import { Spinner, SpinnerType } from "office-ui-fabric-react"
 import { system } from "../../../system"
-import { InifiteScroll, Cache } from "../../../components/scroll"
+import { InfiniteScroll, Cache } from "../../../components/scroll"
 import * as Style from "./message_style"
 import { ISlackMember, ISlackUserMessage, ISlackBotMessage } from "../../../types/slack_type"
 import { MessageScroll } from "../../../messages/slack/MessageScroll"
@@ -17,7 +17,7 @@ export default class Messages extends React.Component<Props, {}> {
   public render() {
     return (
       <div className={Style.MESSAGES}>
-        <InifiteScroll
+        <InfiniteScroll
           containerHeight={window.screen.availHeight - 69}
           itemAverageHeight={48}
           items={this.props.messages}

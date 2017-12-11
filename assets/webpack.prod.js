@@ -6,7 +6,7 @@ module.exports = {
     app: [
       path.join(__dirname, 'app/app.tsx'),
     ],
-    vendor: ['react', 'react-dom', 'office-ui-fabric-react']
+    // vendor: ['react', 'react-dom', 'office-ui-fabric-react']
   },
   output: {
     path: path.join(__dirname, '../priv/static'),
@@ -34,11 +34,11 @@ module.exports = {
     ]
   },
   plugins: [
-    new webpack.DefinePlugin({
-      'process.env': {
-        'NODE_ENV': JSON.stringify('production')
-      }
-    }),
+    // new webpack.DefinePlugin({
+    //   'process.env': {
+    //     'NODE_ENV': JSON.stringify('production')
+    //   }
+    // }),
     new webpack.optimize.CommonsChunkPlugin({ name: 'vendor', filename: '[name].js' }),
     new webpack.optimize.UglifyJsPlugin({
       compress: {
