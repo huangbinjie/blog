@@ -7,9 +7,11 @@
   },
   "dependencies": {
     "@types/phoenix": "0.0.4",
+    "@types/react-router": "^4.0.19",
+    "@types/react-router-dom": "^4.2.3",
     "csstips": "^0.2.0",
     "firebase": "^3.7.4",
-    "history": "^4.6.1",
+    "history": "^4.7.2",
     "meng": "^3.4.6",
     "office-ui-fabric-react": "^4.37.1",
     "phoenix": "file:../deps/phoenix",
@@ -21,6 +23,7 @@
     "react-iscroller": "^1.0.8",
     "react-router": "^4.0.0",
     "react-router-dom": "^4.0.0",
+    "react-router-ractor": "^1.0.3",
     "rxjs": "^5.2.0",
     "typescript": "^2.2.2",
     "typestyle": "^1.2.1"
