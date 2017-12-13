@@ -18,7 +18,7 @@ export default class Messages extends React.Component<Props, {}> {
     return (
       <div className={Style.MESSAGES}>
         <InfiniteScroll
-          containerHeight={window.screen.availHeight - 69}
+          containerHeight={window.innerHeight - 69}
           itemAverageHeight={48}
           items={this.props.messages}
           onRenderCell={this.renderCell}

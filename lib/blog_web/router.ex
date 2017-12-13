@@ -27,9 +27,7 @@ defmodule BlogWeb.Router do
 
     # # get "/medium", MediumController, :tag
 
-    scope "/reddit" do
-      resources "/r/:channel", RedditController, only: [:index]
-    end
+    get "/reddit/r/:channel", RedditController, :index
 
     get "/twitter/:name", TwitterController, :index
 
