@@ -6,25 +6,30 @@ import { Message } from "./message/message"
 import { withRouter, RouteComponentProps } from "react-router"
 import * as style from "./twitter_style"
 
-@listen<RouteComponentProps<{ name: string }>>((currentStore, nextStore) =>
-  !currentStore.match || currentStore.match.params.name !== nextStore.match!.params.name
-    ? list(nextStore.match!.params.name)
-    : null
-  , "tweets")
-@lift({ tweets: [] as Twitter[] })
 @withRouter
-export default class TwitterView extends React.Component<Props, {}> {
+export default class TwitterView extends React.Component<Props, State> {
+  public state: State = { tweets: [] }
+
+  public componentWillReceiveProps(nextProps: Props) {
+    if (this.props.match.params.name !== nextProps.match.params.name) {
+      list(this.props.match.params.name).subscribe(tweets => this.setState({ tweets }))
+    }
+  }
+  public componentDidMount() {
+    list(this.props.match.params.name).subscribe(tweets => this.setState({ tweets }))
+  }
   public render() {
     return (
       <div className={style.TWITTER}>
         <ul>
-          {this.props.tweets.map(tweet => <Message key={tweet.id_str} tweet={tweet} />)}
+          {this.state.tweets.map(tweet => <Message key={tweet.id_str} tweet={tweet} />)}
         </ul>
       </div>
     )
   }
 }
 
-type Props = {
+type Props = RouteComponentProps<{ name: string }>
+type State = {
   tweets: Twitter[]
 }

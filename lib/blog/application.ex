@@ -15,7 +15,7 @@ defmodule Blog.Application do
       # Start your own worker by calling: Blog.Worker.start_link(arg1, arg2, arg3)
       # worker(Blog.Worker, [arg1, arg2, arg3]),
       # worker(Blog.SlackWorker, []),
-      # worker(Blog.Reddit, [])
+      worker(Blog.Reddit, [])
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
