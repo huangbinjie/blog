@@ -14,8 +14,11 @@ socket.connect()
 const history = createBrowserHistory()
 const HistorySotre = createHistoryStore(history)
 
-render(<Provider system={system} stores={[HistorySotre, ...stores]}>
-  <Router history={history}>
-    <Layout />
-  </Router>
-</Provider>, document.getElementById("root"))
+render(
+  <Provider system={system} stores={[HistorySotre, ...stores]}>
+    <Router history={history}>
+      <Layout />
+    </Router>
+  </Provider>,
+  document.getElementById("root")
+)

@@ -13,7 +13,7 @@ export type State = {
   latest: string
   channel: string,
 
-  cache: Cache
+  cache: Cache[]
   initialScrollTop: number
 }
 
@@ -35,13 +35,12 @@ export class SlackStore extends Store<State> {
         list(this.state.channel, this.state.latest)
           .map(response => response.messages)
           .combineLatest(user(), (messages, users) => ({ messages: this.mergeUser2Message(messages, users), users }))
-          .subscribe(data => this.setState({ messages: data.messages, users: data.users }))
+          .subscribe(data => this.setState({ messages: data.messages, users: data.users, latest: data.messages.slice(-1)[0].ts }))
       })
       .match(NextPage, () => {
-        const latest = this.state.messages[this.state.messages.length - 1].ts
         list(this.state.channel, this.state.latest)
           .map(response => this.mergeUser2Message(response.messages, this.state.users!))
-          .subscribe(messages => this.setState({ messages: this.state.messages.concat(messages) }))
+          .subscribe(messages => this.setState({ messages: this.state.messages.concat(messages), latest: messages.slice(-1)[0].ts }))
       })
       .match(MessageScroll, messageScroll => {
         this.state.initialScrollTop = messageScroll.scrollTop

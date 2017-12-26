@@ -6,12 +6,14 @@
     "watch": "brunch watch --stdin"
   },
   "dependencies": {
+    "@types/lodash.throttle": "^4.1.3",
     "@types/phoenix": "0.0.4",
     "@types/react-router": "^4.0.19",
     "@types/react-router-dom": "^4.2.3",
     "csstips": "^0.2.0",
     "firebase": "^3.7.4",
     "history": "^4.7.2",
+    "lodash.throttle": "^4.1.1",
     "meng": "^3.4.6",
     "office-ui-fabric-react": "^4.37.1",
     "phoenix": "file:../deps/phoenix",

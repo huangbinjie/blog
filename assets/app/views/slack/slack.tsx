@@ -13,7 +13,9 @@ import * as Style from "./slack_style"
 @Providers([{ provide: SlackStore }])
 export default class Slack extends React.Component<State, {}> {
   public componentDidMount() {
-    system.dispatch(new FetchData())
+    if (this.props.messages.length === 0) {
+      system.dispatch(new FetchData())
+    }
   }
   public render() {
     return (

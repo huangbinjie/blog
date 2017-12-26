@@ -26,7 +26,8 @@ export const LIST_CONTENT = style(flex, {
     main: {
       lineHeight: "30px",
       color: "#333",
-      whiteSpace: "pre-wrap"
+      whiteSpace: "pre-wrap",
+      wordBreak: "break-all"
     }
   }
 })
