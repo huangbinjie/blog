@@ -14,6 +14,10 @@ type Props = {
 }
 
 export default class Messages extends React.Component<Props, {}> {
+  public scrollTop: number
+  public componentWillUnmount() {
+    system.dispatch(new MessageScroll(this.scrollTop))
+  }
   public render() {
     return (
       <div className={Style.MESSAGES}>
@@ -23,7 +27,7 @@ export default class Messages extends React.Component<Props, {}> {
           items={this.props.messages}
           identity="ts"
           onRenderCell={this.renderCell}
-          onScroll={div => system.dispatch(new MessageScroll(div.scrollTop))}
+          onScroll={div => this.scrollTop = div.scrollTop}
           onEnd={() => system.dispatch(new NextPage())}
           initialScrollTop={this.props.initialScrollTop}
           cache={this.props.cache} />}
