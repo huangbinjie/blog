@@ -11,6 +11,7 @@ export class Projector {
   private callback: Callback
   private guestimatedItemCountPerPage: number
   private displayCount: number
+  private direction = "up"
 
   constructor(
     public divDom: HTMLDivElement,
@@ -38,15 +39,19 @@ export class Projector {
       upperPlaceholderHeight = startItem.top
     } else if (this.startIndex >= 0) {
       // 如果起点不存在，则判断是猜测得来的。目前会导致这种情况的场景只有 resize，因为resize会清空缓存
-      upperPlaceholderHeight = this.upperContentDom.offsetHeight
-      this.needAdjustment = true
+      if (this.direction === "up") {
+        upperPlaceholderHeight = this.divDom.scrollTop - this.averageHeight * 3
+      } else {
+        upperPlaceholderHeight = this.upperContentDom.offsetHeight
+        this.needAdjustment = true
+      }
     } else {
       // items从空到填满，这个时候是初始化，所以是0
       upperPlaceholderHeight = 0
     }
 
     const cachedItemRectLength = this.cachedItemRect.length
-    const unCachedItemCount = this.items.length - cachedItemRectLength
+    const unCachedItemCount = this.items.length - (cachedItemRectLength === 0 ? this.endIndex : cachedItemRectLength)
     const lastCachedItemRect = this.cachedItemRect[cachedItemRectLength - 1]
     const lastCachedItemRectBottom = lastCachedItemRect ? lastCachedItemRect.bottom : 0
     const lastItemRect = this.endIndex >= cachedItemRectLength ? this.cachedItemRect[cachedItemRectLength - 1] : this.cachedItemRect[this.endIndex]
@@ -60,6 +65,7 @@ export class Projector {
    * 手往上滑， 屏幕往下滑
    */
   public up = () => {
+    this.direction = "up"
     const scrollTop = this.divDom.scrollTop
     const anchorItemRect = this.cachedItemRect[this.anchorItem.index]
     // 滑动范围超过一个元素的高度之后再处理
@@ -74,6 +80,7 @@ export class Projector {
         // this.anchorItem.index = this.endIndex + guestimatedUnCachedCount
         this.startIndex = this.endIndex + guestimatedUnCachedCount - 3
         this.endIndex = this.startIndex + this.displayCount - 1
+        this.cachedItemRect.length = 0
       } else {
         // 正常滑动速度
         this.startIndex = itemIndex > 2 ? itemIndex - 3 : 0
@@ -87,6 +94,7 @@ export class Projector {
    * 手往下滑， 屏幕往上滑
    */
   public down = () => {
+    this.direction = "down"
     const scrollTop = this.divDom.scrollTop
     // 不处理由于调整填充高度带来的滚动事件
     if (this.isAdjusting) {

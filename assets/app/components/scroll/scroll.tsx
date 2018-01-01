@@ -42,7 +42,7 @@ export class InfiniteScroll extends React.Component<Props, State> {
   }
 
   public componentDidUpdate() {
-    this.adjustUpperPlacehilderHieght()
+    this.adjustUpperPlaceholderHieght()
   }
 
   /**
@@ -78,7 +78,8 @@ export class InfiniteScroll extends React.Component<Props, State> {
         this.width = this.divDom.clientWidth
         this.resizing = true
         this.projector.cachedItemRect.length = 0
-        this.projector.next()
+        this.projector.needAdjustment = true
+        this.setState({})
       }
     })
   }
@@ -103,7 +104,7 @@ export class InfiniteScroll extends React.Component<Props, State> {
    * 第二次 render，子节点发现还是需要调整，根据刚刚拿到的正确的填充高度再刷新一次缓存。最后一个子节点把 needAdjustment 改成 false。
    * 第二次didupdate，不需要调整
    */
-  public adjustUpperPlacehilderHieght() {
+  public adjustUpperPlaceholderHieght() {
     if (this.projector.needAdjustment) {
       const cachedItemRect = this.projector.cachedItemRect
       const anchor = this.projector.anchorItem
