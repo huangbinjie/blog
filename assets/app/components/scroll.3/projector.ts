@@ -6,6 +6,7 @@ export class Projector {
   // 描点，index 等于 index 或者 startIndex + 3。offset 等于描点顶部到容器顶部的scrollTop
   public anchorItem = { index: 0, offset: 0 }
   public needAdjustment = false
+  public needAdjustAnchor = false
   public isAdjusting = false
 
   private callback: Callback
@@ -54,10 +55,7 @@ export class Projector {
     }
 
     const cachedItemRectLength = this.cachedItemRect.length
-    // 快速往上滑会清空缓存，没有缓存就有endindex
-    const endIndex = cachedItemRectLength === 0 ? this.endIndex : cachedItemRectLength
-    const bottomCountDelta = this.items.length - endIndex
-    const unCachedItemCount = bottomCountDelta < 0 ? 0 : bottomCountDelta
+    const unCachedItemCount = this.items.length - (cachedItemRectLength === 0 ? this.endIndex : cachedItemRectLength)
     const lastCachedItemRect = this.cachedItemRect[cachedItemRectLength - 1]
     const lastCachedItemRectBottom = lastCachedItemRect ? lastCachedItemRect.bottom : 0
     const lastItemRect = this.endIndex >= cachedItemRectLength ? this.cachedItemRect[cachedItemRectLength - 1] : this.cachedItemRect[this.endIndex]
@@ -71,6 +69,9 @@ export class Projector {
    * 手往上滑， 屏幕往下滑
    */
   public up = () => {
+    if (this.isAdjusting) {
+      return
+    }
     this.direction = "up"
     const scrollTop = this.divDom.scrollTop
     const anchorItemRect = this.cachedItemRect[this.anchorItem.index]
@@ -84,7 +85,7 @@ export class Projector {
         // 缓存最后一个到当前anchor位置之间的item数量，暂时是猜测
         const guestimatedUnCachedCount = Math.ceil(unCachedDelta / this.averageHeight)
         // this.anchorItem.index = this.endIndex + guestimatedUnCachedCount
-        this.startIndex = this.endIndex + guestimatedUnCachedCount - 3
+        this.startIndex = this.endIndex + guestimatedUnCachedCount
         this.endIndex = this.startIndex + this.displayCount - 1
         this.cachedItemRect.length = 0
         this.anchorItem.index = this.startIndex + 6
@@ -110,16 +111,15 @@ export class Projector {
     if (this.anchorItem.index > 3 && scrollTop < this.anchorItem.offset) {
       const startItem = this.cachedItemRect[this.startIndex]
       const itemIndex = this.cachedItemRect.findIndex(item => item ? item.top > scrollTop : false) - 1
-      if (this.divDom.scrollTop < startItem.top && itemIndex === this.anchorItem.index - 4) {
+      if (this.divDom.scrollTop < startItem.top && itemIndex === this.anchorItem.index - 3) {
         const delta = this.anchorItem.offset - this.divDom.scrollTop
         // 往上快速滑动，假设 [1,2,3,undefined,4] 从4往上滑，如果是3和4之间，那么会拿到4的下标，4的下标恰好是 this.anchorItem.index - 3，
         // 其他情况会拿到1-3的下标
         const guestimatedOutOfProjectorDelta = delta - (this.anchorItem.offset - startItem.top)
         const guestimatedOutOfProjectorCount = Math.floor(guestimatedOutOfProjectorDelta / this.averageHeight)
         const guestimatedStartIndex = itemIndex - guestimatedOutOfProjectorCount - 3
-        this.startIndex = guestimatedStartIndex < 0 ? 0 : guestimatedStartIndex
+        this.startIndex = guestimatedStartIndex < 0 ? this.startIndex : guestimatedStartIndex
         this.endIndex = this.startIndex + this.displayCount - 1
-        this.cachedItemRect.length = 0
       } else {
         this.startIndex = itemIndex > 2 ? itemIndex - 3 : 0
         this.endIndex = this.startIndex + this.displayCount - 1
@@ -138,7 +138,6 @@ export class Projector {
     const scrollTop = this.divDom.scrollTop
     const prevStartIndex = this.anchorItem.index - 3
     const scrollThroughItemCount = prevStartIndex - this.startIndex
-    const sliceEndIndex = scrollThroughItemCount > 3 ? 3 : scrollThroughItemCount
     const scrollThroughItem = this.cachedItemRect.slice(this.startIndex, this.startIndex + scrollThroughItemCount)
     const scrollThroughItemDistance = scrollThroughItem.reduce((acc, item) => acc + item.height, 0)
     const finalHeight = height - scrollThroughItemDistance
@@ -147,7 +146,7 @@ export class Projector {
     return finalHeight
   }
 
-  public adjustAnchor(index: number) {
+  public adjustAnchor() {
     const underAnchorIndex = this.cachedItemRect.findIndex(item => item ? item.top > this.divDom.scrollTop : false)!
     const anchor = this.cachedItemRect[underAnchorIndex - 1]
     if (anchor) {

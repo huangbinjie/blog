@@ -87,14 +87,13 @@ export class InfiniteScroll extends React.Component<Props, State> {
 
   public render() {
     return (
-      <div id="c" ref={div => this.divDom = div!} style={{ overflow: "scroll", WebkitOverflowScrolling: "touch", height: this.props.containerHeight }} onScroll={this.onScroll}>
+      <div id="c" ref={div => this.divDom = div!} style={{ overflow: "scroll", boxSizing: "border-box", height: this.props.containerHeight }} onScroll={this.onScroll}>
         <div ref={div => this.upperContentDom = div!} style={{ height: this.state.upperPlaceholderHeight }}></div>
         {this.state.projectedItems.map((item, index) =>
           <Item
             key={this.props.identity ? item[this.props.identity] : index}
             projector={this.projector}
             item={item}
-            index={index}
             itemIndex={this.projector.startIndex + index}
             upperPlaceholderHeight={this.state.upperPlaceholderHeight}
             onRenderCell={this.props.onRenderCell}
@@ -158,77 +157,12 @@ export class InfiniteScroll extends React.Component<Props, State> {
       })
     }
     this.projector.anchorItem = { index: this.projector.startIndex + 3, offset: this.projector.cachedItemRect[this.projector.startIndex + 3].top }
-  }
 
-  public createChild = (item: any, index: number) => {
-    const parent = this
-    const itemIndex = parent.projector.startIndex + index
-    return class Child extends React.Component {
-      public dom: HTMLDivElement
-
-      // 不知道怎么回事，这个函数拿不到 parent.div
-      public componentDidMount() {
-
-        this.setCache()
-
-      }
-      public render() {
-        return <div ref={div => this.dom = div!}>
-          {parent.props.onRenderCell(item, itemIndex)}
-        </div>
-      }
-
-      /**
-       * 定义：marginTop 所在位置的 top + marginTop + height
-       * ------container top
-       *    |   marginTop
-       * ------ 这里不是top
-       * |    | height offsetHeight
-       * ------ bottom 下一个 item 的 top
-       */
-      public setCache = () => {
-        const projector = parent.projector
-        const cachedItemRect = projector.cachedItemRect
-        const curItem = cachedItemRect[itemIndex]
-        const prevItem = cachedItemRect[itemIndex - 1]
-
-        // 需要调整啥事都不用干(不过还是走到if的分支去了)，这个时候的填充高度不准(待优化)。等新的填充高度计算出来再更新缓存
-        // 更新已存在的缓存有2种情况
-        // 1、window.resize
-        // 2、一次性滑动过多，纠正填充高度之后需要纠正之后的缓存
-        if (projector.needAdjustment) {
-          const rect = this.dom.getBoundingClientRect()
-          if (itemIndex === projector.startIndex) {
-            const bottom = parent.state.upperPlaceholderHeight + rect.height
-            const top = parent.state.upperPlaceholderHeight
-            cachedItemRect[itemIndex] = { index: itemIndex, top, bottom, height: rect.height, needAdjustment: true }
-          } else {
-            const bottom = prevItem.bottom + rect.height
-            const top = prevItem.bottom
-            cachedItemRect[itemIndex] = { index: itemIndex, top, bottom, height: rect.height, needAdjustment: true }
-          }
-          if (projector.isAdjusting && index === parent.state.projectedItems.length - 1) {
-            projector.needAdjustment = false
-            projector.isAdjusting = false
-          }
-        } else {
-          if (curItem && curItem.needAdjustment === false) return
-          // if (!curItem) {
-          const rect = this.dom.getBoundingClientRect()
-          if (prevItem) {
-            // 当前item不存在但是前一个存在
-            const bottom = prevItem.bottom + rect.height
-            const top = prevItem.bottom
-            cachedItemRect[itemIndex] = { index: itemIndex, top, bottom, height: rect.height, needAdjustment: false }
-          } else {
-            // 当前 item 不存在，且前一个也不存在
-            const bottom = parent.state.upperPlaceholderHeight + rect.height
-            const top = parent.state.upperPlaceholderHeight
-            cachedItemRect[itemIndex] = { index: itemIndex, top, bottom, height: rect.height, needAdjustment: false }
-          }
-        }
-      }
-    }
+    // if (this.projector.needAdjustAnchor) {
+    //   this.projector.adjustAnchor()
+    //   this.projector.needAdjustAnchor = false
+    // }
+    console.log(this.projector.anchorItem)
   }
 
   public onScroll = () => {
