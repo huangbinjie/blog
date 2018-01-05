@@ -1,2 +1,2 @@
-export { InfiniteScroll } from "./scroll"
+export { InfiniteScroll } from "./scroller"
 export { Cache } from "./projector"

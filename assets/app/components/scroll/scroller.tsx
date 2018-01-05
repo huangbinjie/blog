@@ -29,8 +29,11 @@ export class InfiniteScroll extends React.Component<Props, State> {
     onEnd: () => { }
   }
   public state: State = { projectedItems: [], underPlaceholderHeight: 0, upperPlaceholderHeight: 0 }
-  private divDom: HTMLDivElement
-  private upperContentDom: HTMLDivElement
+  public divDom: HTMLDivElement
+  public upperContentDom: HTMLDivElement
+  public needAdjustment = false
+  public isAdjusting = false
+
   private hasBottomTouched = true
   private scrollTop = 0
   private projector: Projector
@@ -51,8 +54,9 @@ export class InfiniteScroll extends React.Component<Props, State> {
    */
   public componentDidMount() {
     this.width = this.divDom.clientWidth
-    this.projector = new Projector(this.divDom, this.upperContentDom, this.props.items, this.props.itemAverageHeight, this.props.cache)
-    this.projector.subscribe((projectedItems, upperPlaceholderHeight, underPlaceholderHeight) => {
+    this.projector = new Projector(this, this.props.items, this.props.itemAverageHeight, this.props.cache)
+    this.projector.subscribe((projectedItems, upperPlaceholderHeight, underPlaceholderHeight, needAdjustment) => {
+      this.needAdjustment = needAdjustment
       if (underPlaceholderHeight < this.divDom.clientHeight && !this.hasBottomTouched) {
         this.hasBottomTouched = true
         this.props.onEnd!()
@@ -79,7 +83,7 @@ export class InfiniteScroll extends React.Component<Props, State> {
         this.width = this.divDom.clientWidth
         this.resizing = true
         this.projector.cachedItemRect.length = 0
-        this.projector.needAdjustment = true
+        this.needAdjustment = true
         this.setState({})
       }
     })
@@ -94,7 +98,7 @@ export class InfiniteScroll extends React.Component<Props, State> {
             key={this.props.identity ? item[this.props.identity] : index}
             projector={this.projector}
             item={item}
-            index={index}
+            needAdjustment={this.needAdjustment}
             itemIndex={this.projector.startIndex + index}
             upperPlaceholderHeight={this.state.upperPlaceholderHeight}
             onRenderCell={this.props.onRenderCell}
@@ -117,17 +121,17 @@ export class InfiniteScroll extends React.Component<Props, State> {
    * 第二次didupdate，不需要调整
    */
   public adjustUpperPlaceholderHieght() {
-    if (this.projector.needAdjustment) {
-      if (this.projector.isAdjusting) {
-        this.projector.needAdjustment = false
-        this.projector.isAdjusting = false
+    if (this.needAdjustment) {
+      if (this.isAdjusting) {
+        this.needAdjustment = false
+        this.isAdjusting = false
         return
       }
       const cachedItemRect = this.projector.cachedItemRect
       const anchor = this.projector.anchorItem
       const cachedAnchorItem = cachedItemRect[anchor.index]
       const startItem = this.projector.cachedItemRect[this.projector.startIndex]
-      const finalHeight = this.projector.computeUpperPlaceholderHeight(cachedAnchorItem, startItem.top)
+      const finalHeight = this.computeUpperPlaceholderHeight(cachedAnchorItem, startItem.top)
       const scrollTop = this.divDom.scrollTop
       const upperPlaceholderHeight = startItem.index === 0 ? 0 : finalHeight < 0 ? 0 : finalHeight
 
@@ -154,81 +158,31 @@ export class InfiniteScroll extends React.Component<Props, State> {
           this.divDom.scrollTop = scrollTop - finalHeight
         }
 
-        // this.projector.anchorItem = { index: this.projector.startIndex + 3, offset: this.projector.cachedItemRect[this.projector.startIndex + 3].top }
       })
+    } else {
+      this.projector.anchorItem = { index: this.projector.startIndex + 3, offset: this.projector.cachedItemRect[this.projector.startIndex + 3].top }
     }
-    this.projector.anchorItem = { index: this.projector.startIndex + 3, offset: this.projector.cachedItemRect[this.projector.startIndex + 3].top }
   }
 
-  public createChild = (item: any, index: number) => {
-    const parent = this
-    const itemIndex = parent.projector.startIndex + index
-    return class Child extends React.Component {
-      public dom: HTMLDivElement
 
-      // 不知道怎么回事，这个函数拿不到 parent.div
-      public componentDidMount() {
-
-        this.setCache()
-
-      }
-      public render() {
-        return <div ref={div => this.dom = div!}>
-          {parent.props.onRenderCell(item, itemIndex)}
-        </div>
-      }
-
-      /**
-       * 定义：marginTop 所在位置的 top + marginTop + height
-       * ------container top
-       *    |   marginTop
-       * ------ 这里不是top
-       * |    | height offsetHeight
-       * ------ bottom 下一个 item 的 top
-       */
-      public setCache = () => {
-        const projector = parent.projector
-        const cachedItemRect = projector.cachedItemRect
-        const curItem = cachedItemRect[itemIndex]
-        const prevItem = cachedItemRect[itemIndex - 1]
-
-        // 需要调整啥事都不用干(不过还是走到if的分支去了)，这个时候的填充高度不准(待优化)。等新的填充高度计算出来再更新缓存
-        // 更新已存在的缓存有2种情况
-        // 1、window.resize
-        // 2、一次性滑动过多，纠正填充高度之后需要纠正之后的缓存
-        if (projector.needAdjustment) {
-          const rect = this.dom.getBoundingClientRect()
-          if (itemIndex === projector.startIndex) {
-            const bottom = parent.state.upperPlaceholderHeight + rect.height
-            const top = parent.state.upperPlaceholderHeight
-            cachedItemRect[itemIndex] = { index: itemIndex, top, bottom, height: rect.height, needAdjustment: true }
-          } else {
-            const bottom = prevItem.bottom + rect.height
-            const top = prevItem.bottom
-            cachedItemRect[itemIndex] = { index: itemIndex, top, bottom, height: rect.height, needAdjustment: true }
-          }
-          if (projector.isAdjusting && index === parent.state.projectedItems.length - 1) {
-            projector.needAdjustment = false
-            projector.isAdjusting = false
-          }
-        } else {
-          if (curItem && curItem.needAdjustment === false) return
-          // if (!curItem) {
-          const rect = this.dom.getBoundingClientRect()
-          if (prevItem) {
-            // 当前item不存在但是前一个存在
-            const bottom = prevItem.bottom + rect.height
-            const top = prevItem.bottom
-            cachedItemRect[itemIndex] = { index: itemIndex, top, bottom, height: rect.height, needAdjustment: false }
-          } else {
-            // 当前 item 不存在，且前一个也不存在
-            const bottom = parent.state.upperPlaceholderHeight + rect.height
-            const top = parent.state.upperPlaceholderHeight
-            cachedItemRect[itemIndex] = { index: itemIndex, top, bottom, height: rect.height, needAdjustment: false }
-          }
-        }
-      }
-    }
+  /**
+   * 缓存更新之前的高度减去缓存之后的高度得到填充区需要修补的高度
+   * @param cache 描点的缓存坐标
+   * @param height 填充区的高度，也是第一个 item 的 top
+   * 
+   */
+  public computeUpperPlaceholderHeight(cache: Cache, height: number): number {
+    const projector = this.projector
+    const scrollTop = this.divDom.scrollTop
+    const prevStartIndex = projector.anchorItem.index - 3
+    const scrollThroughItemCount = prevStartIndex - projector.startIndex
+    const sliceEndIndex = scrollThroughItemCount > 3 ? 3 : scrollThroughItemCount
+    const scrollThroughItem = projector.cachedItemRect.slice(projector.startIndex, projector.startIndex + scrollThroughItemCount)
+    const scrollThroughItemDistance = scrollThroughItem.reduce((acc, item) => acc + item.height, 0)
+    const finalHeight = height - scrollThroughItemDistance
+    this.isAdjusting = true
+    // 有可能是负数
+    return finalHeight
   }
 
   public onScroll = () => {

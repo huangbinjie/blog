@@ -1,14 +1,13 @@
 import * as React from "react"
 import { Projector } from "./projector"
 
-
 export type Props = {
   item: any,
   itemIndex: number,
-  index: number,
   isLast: boolean
   onRenderCell: (item?: any, index?: number) => React.ReactNode
-  upperPlaceholderHeight: number
+  upperPlaceholderHeight: number,
+  needAdjustment: boolean
   projector: Projector
 }
 
@@ -42,7 +41,7 @@ export class Item extends React.Component<Props> {
   }
 
   public setCache = (nextProps: Props) => {
-    const { projector, itemIndex, upperPlaceholderHeight } = nextProps
+    const { projector, itemIndex, upperPlaceholderHeight, needAdjustment } = nextProps
     const cachedItemRect = projector.cachedItemRect
     const curItem = cachedItemRect[itemIndex]
     const prevItem = cachedItemRect[itemIndex - 1]
@@ -51,7 +50,7 @@ export class Item extends React.Component<Props> {
     // 更新已存在的缓存有2种情况
     // 1、window.resize
     // 2、一次性滑动过多，纠正填充高度之后需要纠正之后的缓存
-    if (projector.needAdjustment) {
+    if (needAdjustment) {
       const rect = this.dom.getBoundingClientRect()
       if (itemIndex === projector.startIndex) {
         const bottom = upperPlaceholderHeight + rect.height
