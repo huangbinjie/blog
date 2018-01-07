@@ -84,6 +84,7 @@ export class InfiniteScroll extends React.Component<Props, State> {
         this.resizing = true
         this.projector.cachedItemRect.length = 0
         this.needAdjustment = true
+        this.isAdjusting = false
         this.setState({})
       }
     })
@@ -102,7 +103,7 @@ export class InfiniteScroll extends React.Component<Props, State> {
             itemIndex={this.projector.startIndex + index}
             upperPlaceholderHeight={this.state.upperPlaceholderHeight}
             onRenderCell={this.props.onRenderCell}
-            isLast={index === this.state.projectedItems.length - 1}
+            resizing={this.resizing}
           />
         )}
         <div style={{ height: this.state.underPlaceholderHeight }}></div>
@@ -124,7 +125,6 @@ export class InfiniteScroll extends React.Component<Props, State> {
     if (this.needAdjustment) {
       if (this.isAdjusting) {
         this.needAdjustment = false
-        this.isAdjusting = false
         return
       }
       const cachedItemRect = this.projector.cachedItemRect
@@ -132,36 +132,41 @@ export class InfiniteScroll extends React.Component<Props, State> {
       const cachedAnchorItem = cachedItemRect[anchor.index]
       const startItem = this.projector.cachedItemRect[this.projector.startIndex]
       const finalHeight = this.computeUpperPlaceholderHeight(cachedAnchorItem, startItem.top)
-      const scrollTop = this.divDom.scrollTop
       const upperPlaceholderHeight = startItem.index === 0 ? 0 : finalHeight < 0 ? 0 : finalHeight
 
       this.setState({ upperPlaceholderHeight }, () => {
-        if (startItem.index > 0) {
-          if (finalHeight < 0) this.divDom.scrollTop = scrollTop - finalHeight
-          if (this.resizing) {
-            const currentAnchor = this.projector.cachedItemRect[this.projector.startIndex + 3]
-            const anchorDelta = anchor.offset - currentAnchor.top
-            const nextScrollTop = this.divDom.scrollTop - anchorDelta
-
-            // 让滚动位置保持在描点中
-            if (nextScrollTop < currentAnchor.top) {
-              this.divDom.scrollTop = currentAnchor.top
-            } else if (nextScrollTop > currentAnchor.bottom) {
-              this.divDom.scrollTop = currentAnchor.bottom
-            } else {
-              this.divDom.scrollTop = nextScrollTop
-            }
-
-            this.resizing = false
+        if (this.resizing) {
+          const currentAnchor = this.projector.cachedItemRect[this.projector.startIndex + 3]
+          const anchorDelta = anchor.offset - currentAnchor.top
+          const nextScrollTop = this.divDom.scrollTop - anchorDelta
+          // 让滚动位置保持在描点中
+          if (nextScrollTop < currentAnchor.top) {
+            this.divDom.scrollTop = currentAnchor.top
+          } else if (nextScrollTop > currentAnchor.bottom) {
+            this.divDom.scrollTop = currentAnchor.bottom
+          } else {
+            this.divDom.scrollTop = nextScrollTop
           }
+
+          this.resizing = false
         } else {
-          this.divDom.scrollTop = scrollTop - finalHeight
+          // if (finalHeight < 0) this.divDom.scrollTop = scrollTop - finalHeight
+          // else {
+          // if (finalHeight > prevHeight) {
+          //   console.log(this.divDom.scrollTop)
+          //   this.divDom.scrollTop = this.scrollTop + finalHeight - prevHeight
+          // }
+          // }
         }
 
+        // this.scrollTop = this.divDom.scrollTop
+
+        this.projector.anchorItem = { index: this.projector.startIndex + 3, offset: this.projector.cachedItemRect[this.projector.startIndex + 3].top }
+
       })
-    } else {
-      this.projector.anchorItem = { index: this.projector.startIndex + 3, offset: this.projector.cachedItemRect[this.projector.startIndex + 3].top }
     }
+    this.projector.anchorItem = { index: this.projector.startIndex + 3, offset: this.projector.cachedItemRect[this.projector.startIndex + 3].top }
+
   }
 
 
@@ -175,23 +180,39 @@ export class InfiniteScroll extends React.Component<Props, State> {
     const projector = this.projector
     const scrollTop = this.divDom.scrollTop
     const prevStartIndex = projector.anchorItem.index - 3
-    const scrollThroughItemCount = prevStartIndex - projector.startIndex
-    const sliceEndIndex = scrollThroughItemCount > 3 ? 3 : scrollThroughItemCount
-    const scrollThroughItem = projector.cachedItemRect.slice(projector.startIndex, projector.startIndex + scrollThroughItemCount)
-    const scrollThroughItemDistance = scrollThroughItem.reduce((acc, item) => acc + item.height, 0)
-    const finalHeight = height - scrollThroughItemDistance
+    const realPrevStartIndex = prevStartIndex < 3 ? 0 : prevStartIndex
+    const scrollThroughItemCount = realPrevStartIndex - projector.startIndex
     this.isAdjusting = true
-    // 有可能是负数
-    return finalHeight
+    if (scrollThroughItemCount < 0) {
+      const scrollThroughItem = projector.cachedItemRect.slice(projector.startIndex, projector.startIndex + 3)
+      const scrollThroughItemDistance = scrollThroughItem.reduce((acc, item) => acc + item.height, 0)
+      const finalHeight = scrollTop - scrollThroughItemDistance
+      return finalHeight
+    } else if (scrollThroughItemCount > 0) {
+      const scrollThroughItem = projector.cachedItemRect.slice(projector.startIndex, projector.startIndex + scrollThroughItemCount)
+      const scrollThroughItemDistance = scrollThroughItem.reduce((acc, item) => acc + item.height, 0)
+      const finalHeight = height - scrollThroughItemDistance
+      // 有可能是负数
+      return finalHeight
+    }
+    return height
   }
 
   public onScroll = () => {
+    // if (this.isAdjusting) {
+    //   this.isAdjusting = false
+    //   return
+    // }
     const newScrollTop = this.divDom.scrollTop
+    if (this.isAdjusting) {
+      this.isAdjusting = false
+      return
+    }
     this.props.onScroll!(this.divDom)
     if (newScrollTop < this.scrollTop) {
       // 手往下滑,屏幕往上滑
       this.projector.down()
-    } else {
+    } else if (newScrollTop > this.scrollTop) {
       // 往上滑,屏幕往下滑
       this.projector.up()
     }

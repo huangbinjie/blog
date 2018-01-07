@@ -28,7 +28,6 @@ export class Projector {
 
   public next(items?: any[]) {
     if (items) this.items = items
-
     // slice 的第二个参数不包括在内，为了要算进去，所以要 + 1
     const projectedItems = this.items.slice(this.startIndex, this.endIndex + 1)
 
@@ -45,7 +44,7 @@ export class Projector {
         upperPlaceholderHeight = this.scroller.upperContentDom.offsetHeight
         needAdjustment = true
       } else if (this.direction === "up") {
-        upperPlaceholderHeight = this.scrollerDom.scrollTop
+        upperPlaceholderHeight = this.scroller.upperContentDom.offsetHeight
         needAdjustment = true
       } else {
         upperPlaceholderHeight = 0
@@ -73,6 +72,9 @@ export class Projector {
    * 手往上滑， 屏幕往下滑
    */
   public up = () => {
+    if (this.scroller.isAdjusting) {
+      return
+    }
     this.direction = "up"
     const scrollTop = this.scrollerDom.scrollTop
     const anchorItemRect = this.cachedItemRect[this.anchorItem.index]
@@ -89,7 +91,7 @@ export class Projector {
         this.startIndex = this.endIndex + guestimatedUnCachedCount - 3
         this.endIndex = this.startIndex + this.displayCount - 1
         this.cachedItemRect.length = 0
-        this.anchorItem.index = this.startIndex + 6
+        // this.anchorItem.index = this.startIndex + 6
       } else {
         // 正常滑动速度
         this.startIndex = itemIndex > 2 ? itemIndex - 3 : 0
@@ -111,18 +113,18 @@ export class Projector {
     }
     if (this.anchorItem.index > 3 && scrollTop < this.anchorItem.offset) {
       const startItem = this.cachedItemRect[this.startIndex]
-      const itemIndex = this.cachedItemRect.findIndex(item => item ? item.top > scrollTop : false) - 1
-      if (this.scrollerDom.scrollTop < startItem.top && itemIndex === this.anchorItem.index - 4) {
+      const prevItem = this.cachedItemRect[this.startIndex - 1]
+      if (!prevItem) {
         const delta = this.anchorItem.offset - this.scrollerDom.scrollTop
         // 往上快速滑动，假设 [1,2,3,undefined,4] 从4往上滑，如果是3和4之间，那么会拿到4的下标，4的下标恰好是 this.anchorItem.index - 3，
         // 其他情况会拿到1-3的下标
-        const guestimatedOutOfProjectorDelta = delta - (this.anchorItem.offset - startItem.top)
-        const guestimatedOutOfProjectorCount = Math.floor(guestimatedOutOfProjectorDelta / this.averageHeight)
-        const guestimatedStartIndex = itemIndex - guestimatedOutOfProjectorCount - 3
+        const guestimatedOutOfProjectorCount = Math.ceil(delta / this.averageHeight)
+        const guestimatedStartIndex = this.startIndex - guestimatedOutOfProjectorCount
         this.startIndex = guestimatedStartIndex < 0 ? 0 : guestimatedStartIndex
         this.endIndex = this.startIndex + this.displayCount - 1
         this.cachedItemRect.length = 0
       } else {
+        const itemIndex = this.cachedItemRect.findIndex(item => item ? item.top > scrollTop : false) - 1
         this.startIndex = itemIndex > 2 ? itemIndex - 3 : 0
         this.endIndex = this.startIndex + this.displayCount - 1
       }
