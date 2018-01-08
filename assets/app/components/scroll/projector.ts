@@ -11,7 +11,6 @@ export class Projector {
   private callback: Callback
   private guestimatedItemCountPerPage: number
   private displayCount: number
-  private direction = "none"
   private scrollerDom: HTMLDivElement
 
   constructor(
@@ -40,15 +39,8 @@ export class Projector {
       upperPlaceholderHeight = startItem.top
     } else if (this.startIndex >= 0) {
       // 如果起点不存在，则判断是猜测得来的。目前会导致这种情况的场景只有 resize，因为resize会清空缓存
-      if (this.direction === "down") {
-        upperPlaceholderHeight = this.scroller.upperContentDom.offsetHeight
-        needAdjustment = true
-      } else if (this.direction === "up") {
-        upperPlaceholderHeight = this.scroller.upperContentDom.offsetHeight
-        needAdjustment = true
-      } else {
-        upperPlaceholderHeight = 0
-      }
+      upperPlaceholderHeight = this.scroller.upperContentDom.offsetHeight
+      needAdjustment = true
     } else {
       // items从空到填满，这个时候是初始化，所以是0
       upperPlaceholderHeight = 0
@@ -72,10 +64,6 @@ export class Projector {
    * 手往上滑， 屏幕往下滑
    */
   public up = () => {
-    if (this.scroller.isAdjusting) {
-      return
-    }
-    this.direction = "up"
     const scrollTop = this.scrollerDom.scrollTop
     const anchorItemRect = this.cachedItemRect[this.anchorItem.index]
     // 滑动范围超过一个元素的高度之后再处理
@@ -105,12 +93,7 @@ export class Projector {
    * 手往下滑， 屏幕往上滑
    */
   public down = () => {
-    this.direction = "down"
     const scrollTop = this.scrollerDom.scrollTop
-    // 不处理由于调整填充高度带来的滚动事件
-    if (this.scroller.isAdjusting) {
-      return
-    }
     if (this.anchorItem.index > 3 && scrollTop < this.anchorItem.offset) {
       const startItem = this.cachedItemRect[this.startIndex]
       const prevItem = this.cachedItemRect[this.startIndex - 1]

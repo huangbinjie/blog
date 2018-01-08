@@ -16,7 +16,7 @@ export default class RootLayout extends React.Component<{}, {}> {
     return (
       <div className={Style.CONTAINER}>
         {
-          // /Android|iPhone/i.test(navigator.userAgent) ? null : <Nav />
+          /Android|iPhone/i.test(navigator.userAgent) ? null : <Nav />
         }
         <Switch>
           <Route path="/" exact component={Main} />

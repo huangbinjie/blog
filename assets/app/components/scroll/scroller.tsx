@@ -92,7 +92,7 @@ export class InfiniteScroll extends React.Component<Props, State> {
 
   public render() {
     return (
-      <div id="c" ref={div => this.divDom = div!} style={{ overflow: "scroll", WebkitOverflowScrolling: "touch", height: this.props.containerHeight }} onScroll={this.onScroll}>
+      <div id="c" ref={div => this.divDom = div!} style={{ overflow: "scroll", WebkitOverflowScrolling: "touch", overflowAnchor: "none", height: this.props.containerHeight }} onScroll={this.onScroll}>
         <div ref={div => this.upperContentDom = div!} style={{ height: this.state.upperPlaceholderHeight }}></div>
         {this.state.projectedItems.map((item, index) =>
           <Item
@@ -133,33 +133,36 @@ export class InfiniteScroll extends React.Component<Props, State> {
       const startItem = this.projector.cachedItemRect[this.projector.startIndex]
       const finalHeight = this.computeUpperPlaceholderHeight(cachedAnchorItem, startItem.top)
       const upperPlaceholderHeight = startItem.index === 0 ? 0 : finalHeight < 0 ? 0 : finalHeight
+      const prevHeight = this.state.upperPlaceholderHeight
+      const scrollTop = this.divDom.scrollTop
 
       this.setState({ upperPlaceholderHeight }, () => {
-        if (this.resizing) {
-          const currentAnchor = this.projector.cachedItemRect[this.projector.startIndex + 3]
-          const anchorDelta = anchor.offset - currentAnchor.top
-          const nextScrollTop = this.divDom.scrollTop - anchorDelta
-          // 让滚动位置保持在描点中
-          if (nextScrollTop < currentAnchor.top) {
-            this.divDom.scrollTop = currentAnchor.top
-          } else if (nextScrollTop > currentAnchor.bottom) {
-            this.divDom.scrollTop = currentAnchor.bottom
+        if (startItem.index > 0) {
+          if (this.resizing) {
+            const currentAnchor = this.projector.cachedItemRect[this.projector.startIndex + 3]
+            const anchorDelta = anchor.offset - currentAnchor.top
+            const nextScrollTop = this.divDom.scrollTop - anchorDelta
+            // 让滚动位置保持在描点中
+            if (nextScrollTop < currentAnchor.top) {
+              this.divDom.scrollTop = currentAnchor.top
+            } else if (nextScrollTop > currentAnchor.bottom) {
+              this.divDom.scrollTop = currentAnchor.bottom
+            } else {
+              this.divDom.scrollTop = nextScrollTop
+            }
+
+            this.resizing = false
           } else {
-            this.divDom.scrollTop = nextScrollTop
+            if (finalHeight < 0) this.divDom.scrollTop = scrollTop - finalHeight
+            // else {
+            //   if (finalHeight > prevHeight) {
+            //     // this.divDom.scrollTop = this.divDom.scrollTop - 
+            //   }
+            // }
           }
-
-          this.resizing = false
         } else {
-          // if (finalHeight < 0) this.divDom.scrollTop = scrollTop - finalHeight
-          // else {
-          // if (finalHeight > prevHeight) {
-          //   console.log(this.divDom.scrollTop)
-          //   this.divDom.scrollTop = this.scrollTop + finalHeight - prevHeight
-          // }
-          // }
+          this.divDom.scrollTop = scrollTop - finalHeight
         }
-
-        // this.scrollTop = this.divDom.scrollTop
 
         this.projector.anchorItem = { index: this.projector.startIndex + 3, offset: this.projector.cachedItemRect[this.projector.startIndex + 3].top }
 
@@ -180,8 +183,7 @@ export class InfiniteScroll extends React.Component<Props, State> {
     const projector = this.projector
     const scrollTop = this.divDom.scrollTop
     const prevStartIndex = projector.anchorItem.index - 3
-    const realPrevStartIndex = prevStartIndex < 3 ? 0 : prevStartIndex
-    const scrollThroughItemCount = realPrevStartIndex - projector.startIndex
+    const scrollThroughItemCount = prevStartIndex - projector.startIndex
     this.isAdjusting = true
     if (scrollThroughItemCount < 0) {
       const scrollThroughItem = projector.cachedItemRect.slice(projector.startIndex, projector.startIndex + 3)
@@ -199,10 +201,6 @@ export class InfiniteScroll extends React.Component<Props, State> {
   }
 
   public onScroll = () => {
-    // if (this.isAdjusting) {
-    //   this.isAdjusting = false
-    //   return
-    // }
     const newScrollTop = this.divDom.scrollTop
     if (this.isAdjusting) {
       this.isAdjusting = false
