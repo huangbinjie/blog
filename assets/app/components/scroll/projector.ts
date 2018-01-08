@@ -39,7 +39,7 @@ export class Projector {
       upperPlaceholderHeight = startItem.top
     } else if (this.startIndex >= 0) {
       // 如果起点不存在，则判断是猜测得来的。目前会导致这种情况的场景只有 resize，因为resize会清空缓存
-      upperPlaceholderHeight = this.scroller.upperContentDom.offsetHeight
+      upperPlaceholderHeight = this.scroller.state.upperPlaceholderHeight
       needAdjustment = true
     } else {
       // items从空到填满，这个时候是初始化，所以是0
