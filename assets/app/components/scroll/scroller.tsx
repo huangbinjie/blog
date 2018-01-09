@@ -124,6 +124,7 @@ export class InfiniteScroll extends React.Component<Props, State> {
   public adjustUpperPlaceholderHieght() {
     if (this.needAdjustment) {
       if (this.isAdjusting) {
+        this.isAdjusting = false
         this.needAdjustment = false
         return
       }
@@ -154,22 +155,18 @@ export class InfiniteScroll extends React.Component<Props, State> {
             this.resizing = false
           } else {
             if (finalHeight < 0) this.divDom.scrollTop = scrollTop - finalHeight
-            // else {
-            //   if (finalHeight > prevHeight) {
-            //     // this.divDom.scrollTop = this.divDom.scrollTop - 
-            //   }
-            // }
           }
         } else {
-          this.divDom.scrollTop = scrollTop - finalHeight
+          // https://popmotion.io/blog/20170704-manually-set-scroll-while-ios-momentum-scroll-bounces/
+          (this.divDom.style as any)["-webkit-overflow-scrolling"] = "auto"
+          this.divDom.scrollTop = scrollTop - finalHeight;
+          (this.divDom.style as any)["-webkit-overflow-scrolling"] = "touch"
         }
 
         this.projector.anchorItem = { index: this.projector.startIndex + 3, offset: this.projector.cachedItemRect[this.projector.startIndex + 3].top }
 
       })
     }
-    this.projector.anchorItem = { index: this.projector.startIndex + 3, offset: this.projector.cachedItemRect[this.projector.startIndex + 3].top }
-
   }
 
 
@@ -202,10 +199,6 @@ export class InfiniteScroll extends React.Component<Props, State> {
 
   public onScroll = () => {
     const newScrollTop = this.divDom.scrollTop
-    if (this.isAdjusting) {
-      this.isAdjusting = false
-      return
-    }
     this.props.onScroll!(this.divDom)
     if (newScrollTop < this.scrollTop) {
       // 手往下滑,屏幕往上滑

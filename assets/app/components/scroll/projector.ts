@@ -21,7 +21,7 @@ export class Projector {
   ) {
     this.scrollerDom = scroller.divDom
     this.guestimatedItemCountPerPage = Math.ceil(this.scrollerDom.clientHeight / averageHeight)
-    this.displayCount = this.guestimatedItemCountPerPage
+    this.displayCount = this.guestimatedItemCountPerPage + 3
     this.endIndex = this.startIndex + this.displayCount - 1
   }
 
@@ -37,13 +37,10 @@ export class Projector {
     if (startItem) {
       // 正常
       upperPlaceholderHeight = startItem.top
-    } else if (this.startIndex >= 0) {
+    } else {
       // 如果起点不存在，则判断是猜测得来的。目前会导致这种情况的场景只有 resize，因为resize会清空缓存
       upperPlaceholderHeight = this.scroller.state.upperPlaceholderHeight
       needAdjustment = true
-    } else {
-      // items从空到填满，这个时候是初始化，所以是0
-      upperPlaceholderHeight = 0
     }
 
     const cachedItemRectLength = this.cachedItemRect.length
@@ -79,11 +76,12 @@ export class Projector {
         this.startIndex = this.endIndex + guestimatedUnCachedCount - 3
         this.endIndex = this.startIndex + this.displayCount - 1
         this.cachedItemRect.length = 0
-        // this.anchorItem.index = this.startIndex + 6
       } else {
         // 正常滑动速度
         this.startIndex = itemIndex > 2 ? itemIndex - 3 : 0
         this.endIndex = this.startIndex + this.displayCount - 1
+        this.anchorItem.index = itemIndex
+        this.anchorItem.offset = this.cachedItemRect[itemIndex].top
       }
       this.next()
     }
@@ -96,8 +94,9 @@ export class Projector {
     const scrollTop = this.scrollerDom.scrollTop
     if (this.anchorItem.index > 3 && scrollTop < this.anchorItem.offset) {
       const startItem = this.cachedItemRect[this.startIndex]
-      const prevItem = this.cachedItemRect[this.startIndex - 1]
-      if (!prevItem) {
+      // const prevItem = this.cachedItemRect[this.startIndex - 1]
+      const itemIndex = this.cachedItemRect.findIndex(item => item ? item.top > scrollTop : false) - 1
+      if (!this.cachedItemRect[itemIndex - 3]) {
         const delta = this.anchorItem.offset - this.scrollerDom.scrollTop
         // 往上快速滑动，假设 [1,2,3,undefined,4] 从4往上滑，如果是3和4之间，那么会拿到4的下标，4的下标恰好是 this.anchorItem.index - 3，
         // 其他情况会拿到1-3的下标
@@ -107,9 +106,10 @@ export class Projector {
         this.endIndex = this.startIndex + this.displayCount - 1
         this.cachedItemRect.length = 0
       } else {
-        const itemIndex = this.cachedItemRect.findIndex(item => item ? item.top > scrollTop : false) - 1
         this.startIndex = itemIndex > 2 ? itemIndex - 3 : 0
         this.endIndex = this.startIndex + this.displayCount - 1
+        this.anchorItem.index = itemIndex
+        this.anchorItem.offset = this.cachedItemRect[itemIndex].top
       }
       this.next()
     }
