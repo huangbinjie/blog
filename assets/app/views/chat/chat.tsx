@@ -1,7 +1,6 @@
 import * as React from "react"
 import { Observable } from "rxjs"
 import Store, { lift, inject, listen } from "meng"
-import Scroller from "react-iscroller"
 import { TextField } from "office-ui-fabric-react"
 import UsernameLayout from "./layout/username/username_layout"
 import MainLayout from "./layout/main/main_layout"

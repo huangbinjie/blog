@@ -2,7 +2,7 @@ import * as React from "react"
 import Store from "meng"
 import { Spinner, SpinnerType } from "office-ui-fabric-react"
 import { system } from "../../../system"
-import { InfiniteScroll, Cache } from "../../../components/scroll"
+import { InfiniteScroller, Cache } from "react-iscroller"
 import * as Style from "./message_style"
 import { ISlackMember, ISlackUserMessage, ISlackBotMessage } from "../../../types/slack_type"
 import { MessageScroll, NextPage } from "../../../messages/slack"
@@ -21,11 +21,11 @@ export default class Messages extends React.Component<Props, {}> {
   public render() {
     return (
       <div className={Style.MESSAGES}>
-        {!!this.props.messages.length && <InfiniteScroll
+        {!!this.props.messages.length && <InfiniteScroller
           containerHeight={window.innerHeight - 69}
           itemAverageHeight={48}
           items={this.props.messages}
-          identity="ts"
+          itemKey="ts"
           onRenderCell={this.renderCell}
           onScroll={div => this.scrollTop = div.scrollTop}
           onEnd={() => system.dispatch(new NextPage())}

@@ -4,7 +4,7 @@ import { list, user } from "../apis/slack_api"
 import { FetchData } from "../messages/slack/FetchData"
 import { NextPage } from "../messages/slack/NextPage"
 import { MessageScroll } from "../messages/slack/MessageScroll"
-import { Cache } from "../components/scroll"
+import { Cache } from "react-iscroller"
 import { ISlackListType, ISlackUserMessage, ISlackBotMessage, ISlackUserType, ISlackMember } from "../types/slack_type"
 
 export type State = {

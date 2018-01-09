@@ -6,7 +6,7 @@ module.exports = {
     app: [
       path.join(__dirname, 'app/app.tsx'),
     ],
-    // vendor: ['react', 'react-dom', 'office-ui-fabric-react']
+    vendor: ['react', 'react-dom', 'office-ui-fabric-react']
   },
   output: {
     path: path.join(__dirname, '../priv/static'),
