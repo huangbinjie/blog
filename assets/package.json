@@ -23,7 +23,7 @@
     "react-iscroller": "^1.0.13",
     "react-router": "^4.0.0",
     "react-router-dom": "^4.0.0",
-    "react-router-ractor": "^1.0.3",
+    "react-router-ractor": "^1.0.6",
     "rxjs": "^5.2.0",
     "typescript": "^2.2.2",
     "typestyle": "^1.2.1"
