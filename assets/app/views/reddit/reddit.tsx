@@ -37,7 +37,7 @@ export default class Reddit extends React.Component<RedditState, {}> {
             <Space num={3} />
             <Link
               className={Style.LI_CONTENT_DOMAIN}
-              href={`https://www.reddit.com/domain/` + item.data.domain}>
+              href={`https://www.reddit.com` + item.data.domain}>
               <small>({item.data.domain})</small>
             </Link>
           </header>
@@ -46,7 +46,7 @@ export default class Reddit extends React.Component<RedditState, {}> {
             <Space />|<Space />
             {item.data.num_comments}
             <Space />
-            <Link href={"https://www.reddit.com/domain/" + item.data.permalink}>comments</Link>
+            <Link href={"https://www.reddit.com" + item.data.permalink}>comments</Link>
             <Space />|<Space />
             {friendlyDate(item.data.created_utc)}
           </footer>
