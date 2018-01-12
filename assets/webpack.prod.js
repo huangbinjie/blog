@@ -1,5 +1,6 @@
 const webpack = require('webpack')
 const path = require('path')
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 
 module.exports = {
   entry: {
@@ -40,11 +41,16 @@ module.exports = {
       }
     }),
     new webpack.optimize.CommonsChunkPlugin({ name: 'vendor', filename: '[name].js' }),
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        warnings: false
-      },
-      mangle: true
+    new UglifyJsPlugin({
+      uglifyOptions: {
+        compress: {
+          keep_classnames: true
+        },
+        mangle: {
+          keep_classnames: true
+        },
+        warnings: false,
+      }
     })
   ]
 }
