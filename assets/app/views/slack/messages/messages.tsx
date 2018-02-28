@@ -14,7 +14,8 @@ type Props = {
 }
 
 export default class Messages extends React.Component<Props, {}> {
-  public scrollTop: number
+  private scrollTop: number
+  private scrollerHeight = window.innerHeight - 69
   public componentWillUnmount() {
     system.dispatch(new MessageScroll(this.scrollTop))
   }
@@ -22,7 +23,7 @@ export default class Messages extends React.Component<Props, {}> {
     return (
       <div className={Style.MESSAGES}>
         {!!this.props.messages.length && <InfiniteScroller
-          containerHeight={window.innerHeight - 69}
+          containerHeight={this.scrollerHeight}
           itemAverageHeight={48}
           items={this.props.messages}
           itemKey="ts"
