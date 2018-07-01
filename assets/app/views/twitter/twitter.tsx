@@ -12,9 +12,7 @@ import { FetchTwitterUser } from "../../messages/twitter/FetchTwitterUser";
 @Providers([TwitterStore])
 class TwitterComponent extends React.Component<Props> {
   public componentWillReceiveProps(nextProps: Props) {
-    if (this.props.match.params.name !== nextProps.match.params.name) {
-      system.dispatch(new FetchTwitterUser(this.props.match.params.name))
-    }
+    system.dispatch(new FetchTwitterUser(nextProps.match.params.name))
   }
   public componentDidMount() {
     system.dispatch(new FetchTwitterUser(this.props.match.params.name))

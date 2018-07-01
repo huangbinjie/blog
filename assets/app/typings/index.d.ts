@@ -3,6 +3,7 @@ declare module "callbag-basics" {
   export const pipe: any
   export const map: any
   export const fromPromise: any
+  export const filter: any
 }
 declare module "callbag-flat-map-operator" {
   export default switchMap
