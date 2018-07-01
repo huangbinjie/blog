@@ -4,23 +4,26 @@ import { Twitter } from "../../types/twitter_type"
 import { Message } from "./message/message"
 import { withRouter, RouteComponentProps } from "react-router"
 import * as style from "./twitter_style"
+import { Providers } from "ractor-react"
+import { TwitterStore } from "../../stores/TwitterStore"
+import { system } from "../../system";
+import { FetchTwitterUser } from "../../messages/twitter/FetchTwitterUser";
 
-class TwitterComponent extends React.Component<Props, State> {
-  public state: State = { tweets: [] }
-
+@Providers([TwitterStore])
+class TwitterComponent extends React.Component<Props> {
   public componentWillReceiveProps(nextProps: Props) {
     if (this.props.match.params.name !== nextProps.match.params.name) {
-      list(this.props.match.params.name).then(tweets => this.setState({ tweets }))
+      system.dispatch(new FetchTwitterUser(this.props.match.params.name))
     }
   }
   public componentDidMount() {
-    list(this.props.match.params.name).then(tweets => this.setState({ tweets }))
+    system.dispatch(new FetchTwitterUser(this.props.match.params.name))
   }
   public render() {
     return (
       <div className={style.TWITTER}>
         <ul>
-          {this.state.tweets.map(tweet => <Message key={tweet.id_str} tweet={tweet} />)}
+          {this.props.tweets.map(tweet => <Message key={tweet.id_str} tweet={tweet} />)}
         </ul>
       </div>
     )
@@ -29,7 +32,7 @@ class TwitterComponent extends React.Component<Props, State> {
 
 export const TwitterView = withRouter(TwitterComponent)
 
-type Props = RouteComponentProps<{ name: string }>
+type Props = RouteComponentProps<{ name: string }> & { tweets: Twitter[] }
 type State = {
   tweets: Twitter[]
 }

@@ -2,7 +2,7 @@ import * as React from "react"
 import { FocusZone, FocusZoneDirection, List, TextField, Spinner, SpinnerType, Link } from "office-ui-fabric-react"
 import { Providers } from "ractor-react"
 import { system } from "../../system"
-import { FetchData } from "../../messages/reddit"
+import { FetchRedditData } from "../../messages/reddit"
 import { RedditState, RedditStore } from "../../stores/RedditStore"
 import Space from "../../components/space/space"
 import { IRedditType, IRedditListType } from "../../types/reddit_type"
@@ -12,7 +12,7 @@ import * as Style from "./reddit_style"
 @Providers([RedditStore])
 export default class Reddit extends React.Component<RedditState, {}> {
   public componentDidMount() {
-    system.dispatch(new FetchData())
+    system.dispatch(new FetchRedditData())
   }
   public render() {
     return (

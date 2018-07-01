@@ -7,11 +7,11 @@
     "target": "es6",
     "jsx": "react",
     "sourceMap": false,
-    "skipLibCheck": true
-    // "lib": [
-    //   "es2015",
-    //   "dom"
-    // ]
+    "skipLibCheck": true,
+    "lib": [
+      "es2015",
+      "dom"
+    ]
   },
   "include": [
     "app"

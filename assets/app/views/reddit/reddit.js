@@ -47,7 +47,7 @@ let Reddit = class Reddit extends React.Component {
         };
     }
     componentDidMount() {
-        system_1.system.dispatch(new reddit_1.FetchData());
+        system_1.system.dispatch(new reddit_1.FetchRedditData());
     }
     render() {
         return (React.createElement(office_ui_fabric_react_1.FocusZone, { direction: office_ui_fabric_react_1.FocusZoneDirection.vertical },

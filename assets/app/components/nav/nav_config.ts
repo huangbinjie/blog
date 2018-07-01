@@ -3,7 +3,7 @@ export const groups =
     {
       links: [
         {
-          name: "Coral",
+          name: "Corol",
           url: "/",
           links: [
             {
@@ -31,6 +31,11 @@ export const groups =
               name: "dan_abramov",
               url: "/twitter/dan_abramov",
               key: "twitter/dan_abramov"
+            },
+            {
+              name: "andrestaltz",
+              url: "/twitter/andrestaltz",
+              key: "twitter/andrestaltz"
             },
             {
               name: "BenLesh",

@@ -1,4 +1,4 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var FetchData_1 = require("./FetchData");
-exports.FetchData = FetchData_1.FetchData;
+var FetchRedditData_1 = require("./FetchRedditData");
+exports.FetchRedditData = FetchRedditData_1.FetchRedditData;
