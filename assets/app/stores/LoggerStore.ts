@@ -1,6 +1,7 @@
 import { Store } from "ractor"
 
 export class LoggerStore extends Store<{}> {
+  public state = {}
   public preStart() {
     this.context.system.eventStream.onAny((_, obj) => {
       const date = new Date()

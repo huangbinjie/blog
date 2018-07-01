@@ -8,16 +8,15 @@ import Title from "./title/title"
 import Pivot from "./pivot/pivot"
 import Topics from "./topics/topics"
 
-@Providers([
-  { provide: HNStore }
-])
+@Providers([HNStore])
 export default class HN extends React.Component<HNState, {}> {
   public componentWillUnmount() {
     system.dispatch(new CloseSocket())
   }
   public componentDidMount() {
-    if (!this.props.posts.length)
+    if (!this.props.posts.length) {
       system.dispatch(new Init())
+    }
   }
   public render() {
     return (

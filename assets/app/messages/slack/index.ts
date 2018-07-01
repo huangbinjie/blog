@@ -1,3 +1,3 @@
-export { FetchData } from "./FetchData"
+export { FetchSlackData } from "./FetchSlackData"
 export { MessageScroll } from "./MessageScroll"
 export { NextPage } from "./NextPage"

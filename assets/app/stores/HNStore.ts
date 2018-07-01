@@ -14,8 +14,8 @@ export type HNState = {
 
 export class HNStore extends Store<HNState> {
   public state = { posts: [], tab: "newstories", selectedKey: "0" }
-  private database: firebase.database.Database
-  private app: firebase.database.Reference
+  private database!: firebase.database.Database
+  private app!: firebase.database.Reference
 
   public preStart() {
     this.database = firebase.database()

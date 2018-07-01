@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "strict": true,
+    "noResolve": false,
     "experimentalDecorators": true,
     "module": "commonjs",
     "target": "es6",

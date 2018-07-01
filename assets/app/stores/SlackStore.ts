@@ -1,7 +1,7 @@
 import { Store } from "ractor"
 import { system } from "../system"
 import { list, user } from "../apis/slack_api"
-import { FetchData } from "../messages/slack/FetchData"
+import { FetchSlackData } from "../messages/slack/FetchSlackData"
 import { NextPage } from "../messages/slack/NextPage"
 import { MessageScroll } from "../messages/slack/MessageScroll"
 import { Cache } from "react-iscroller"
@@ -31,16 +31,16 @@ export class SlackStore extends Store<State> {
 
   public createReceive() {
     return this.receiveBuilder()
-      .match(FetchData, fetchData => {
-        list(this.state.channel, this.state.latest)
-          .map(response => response.messages)
-          .combineLatest(user(), (messages, users) => ({ messages: this.mergeUser2Message(messages, users), users }))
-          .subscribe(data => this.setState({ messages: data.messages, users: data.users, latest: data.messages.slice(-1)[0].ts }))
+      .match(FetchSlackData, fetchData => {
+        Promise
+          .all([list(this.state.channel, this.state.latest).then(response => response.messages), user()])
+          .then(([messages, users]) => ({ messages: this.mergeUser2Message(messages, users), users }))
+          .then(data => this.setState({ messages: data.messages, users: data.users, latest: data.messages.slice(-1)[0].ts }))
       })
       .match(NextPage, () => {
         list(this.state.channel, this.state.latest)
-          .map(response => this.mergeUser2Message(response.messages, this.state.users!))
-          .subscribe(messages => this.setState({ messages: this.state.messages.concat(messages), latest: messages.slice(-1)[0].ts }))
+          .then(response => this.mergeUser2Message(response.messages, this.state.users!))
+          .then(messages => this.setState({ messages: this.state.messages.concat(messages), latest: messages.slice(-1)[0].ts }))
       })
       .match(MessageScroll, messageScroll => {
         this.state.initialScrollTop = messageScroll.scrollTop

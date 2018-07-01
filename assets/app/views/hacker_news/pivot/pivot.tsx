@@ -11,6 +11,6 @@ export default (selectedKey: string) =>
     <PivotItem linkText="beststories" itemKey="3"></PivotItem>
   </Pivot>
 
-function linkClick(item: PivotItem) {
-  system.dispatch(new TabChanged(item.props.linkText!, item.props.itemKey!))
+function linkClick(item?: PivotItem) {
+  system.dispatch(new TabChanged(item!.props.linkText!, item!.props.itemKey!))
 }

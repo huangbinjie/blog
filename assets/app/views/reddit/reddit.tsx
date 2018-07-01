@@ -9,9 +9,7 @@ import { IRedditType, IRedditListType } from "../../types/reddit_type"
 import { friendlyDate } from "../../utils/unix_time_to_date"
 import * as Style from "./reddit_style"
 
-@Providers([
-  { provide: RedditStore }
-])
+@Providers([RedditStore])
 export default class Reddit extends React.Component<RedditState, {}> {
   public componentDidMount() {
     system.dispatch(new FetchData())
@@ -26,10 +24,10 @@ export default class Reddit extends React.Component<RedditState, {}> {
     )
   }
 
-  private renderCell = (item: IRedditListType, index: number) => {
+  private renderCell = (item: IRedditListType, index?: number) => {
     return (
       <div key={item.data.id} className={Style.LI}>
-        <div className={Style.LI_NUM}>{index + 1}</div>
+        <div className={Style.LI_NUM}>{index! + 1}</div>
         <div className={Style.LI_UPS}>{item.data.ups}</div>
         <div className={Style.LI_CONTENT}>
           <header className={Style.LI_CONTENT_HEADER}>

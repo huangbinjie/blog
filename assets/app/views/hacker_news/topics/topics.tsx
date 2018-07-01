@@ -17,10 +17,10 @@ export default ({ posts }: Props) =>
     {!!posts.length && <List items={posts} onRenderCell={renderCell} />}
   </div>
 
-const renderCell = (item: IHNTopic, index: number) => {
+const renderCell = (item: IHNTopic, index?: number) => {
   return (
     <div key={item.id} className={Style.LI}>
-      <div className={Style.LI_NUM}>{index + 1}</div>
+      <div className={Style.LI_NUM}>{index! + 1}</div>
       <div className={Style.LI_UPS}>{item.score}</div>
       <div className={Style.LI_CONTENT}>
         <header className={Style.LI_CONTENT_HEADER}>

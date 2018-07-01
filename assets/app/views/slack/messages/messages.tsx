@@ -1,5 +1,4 @@
 import * as React from "react"
-import Store from "meng"
 import { Spinner, SpinnerType } from "office-ui-fabric-react"
 import { system } from "../../../system"
 import { InfiniteScroller, Cache } from "react-iscroller"
@@ -14,7 +13,7 @@ type Props = {
 }
 
 export default class Messages extends React.Component<Props, {}> {
-  private scrollTop: number
+  private scrollTop = 0
   private scrollerHeight = window.innerHeight - 69
   public componentWillUnmount() {
     system.dispatch(new MessageScroll(this.scrollTop))
