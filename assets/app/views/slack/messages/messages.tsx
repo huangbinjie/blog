@@ -14,7 +14,7 @@ type Props = {
 
 export default class Messages extends React.Component<Props, {}> {
   private scrollTop = 0
-  private scrollerHeight = window.innerHeight - 69
+  private scrollerHeight = window.innerHeight - 21
   public componentWillUnmount() {
     system.dispatch(new MessageScroll(this.scrollTop))
   }

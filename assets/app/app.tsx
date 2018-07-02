@@ -7,6 +7,10 @@ import { stores } from "./stores"
 import { history } from "./stores/HistoryStore"
 import Layout from "./views/layout"
 
+import { initializeIcons } from "office-ui-fabric-react/lib/Icons"
+
+initializeIcons()
+
 render(
   <Provider system={system} stores={stores}>
     <Router history={history}>

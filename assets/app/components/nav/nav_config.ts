@@ -25,7 +25,7 @@ export const groups =
         },
         {
           name: "Twitter",
-          url: "/",
+          url: "#",
           links: [
             {
               name: "dan_abramov",
